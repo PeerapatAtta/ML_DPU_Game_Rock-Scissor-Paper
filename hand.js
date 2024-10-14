@@ -222,31 +222,62 @@ function compareGestures(player1Gesture, aiGesture) {
 // }
 
 function detectGesture(landmarks) {
-    // ตรวจสอบนิ้วแต่ละนิ้วว่าถูกเหยียดออกหรือไม่
-    const thumbExtended = landmarks[4].x < landmarks[3].x; // นิ้วโป้งยืดออก
-    const indexExtended = landmarks[8].y < landmarks[6].y; // นิ้วชี้ยืดออก
-    const middleExtended = landmarks[12].y < landmarks[10].y; // นิ้วกลางยืดออก
-    const ringExtended = landmarks[16].y < landmarks[14].y; // นิ้วนางยืดออก
-    const pinkyExtended = landmarks[20].y < landmarks[18].y; // นิ้วก้อยยืดออก
-
-    // ถ้านิ้วทั้งหมดเหยียดตรง ให้ตรวจจับเป็น "Paper"
-    if (thumbExtended && indexExtended && middleExtended && ringExtended && pinkyExtended) {
-        return 'Paper';
+    // ตรวจสอบทิศทางของมือก่อน (แนวตั้งหรือแนวนอน)
+    const isVertical = Math.abs(landmarks[0].y - landmarks[9].y) > Math.abs(landmarks[0].x - landmarks[9].x);
+    // const isVertical = (landmarks[0].y < landmarks[17].y) || (landmarks[0].y < landmarks[1].y);
+    //Show log if the hand is vertical or horizontal
+    if (isVertical) {
+        console.log("Vertical");
+    } else {
+        console.log("Horizontal");
     }
 
-    // ถ้าเหยียดนิ้วชี้และนิ้วกลาง แต่ไม่เหยียดนิ้วนางและนิ้วก้อย ให้ตรวจจับเป็น "Scissors"
-    const onlyIndexAndMiddleExtended =
-        indexExtended && middleExtended && !ringExtended && !pinkyExtended;
-    if (onlyIndexAndMiddleExtended) {
-        return 'Scissors';
+    // ตรวจสอบการยืดของนิ้วเมื่อมืออยู่ในแนวตั้ง
+    if (isVertical) {
+        const allFingersExtended =
+            landmarks[8].y < landmarks[6].y &&  // Index finger extended
+            landmarks[12].y < landmarks[10].y && // Middle finger extended
+            landmarks[16].y < landmarks[14].y && // Ring finger extended
+            landmarks[20].y < landmarks[18].y;   // Pinky finger extended
+        if (allFingersExtended) return 'Paper';
+
+        const onlyIndexAndMiddleExtended =
+            landmarks[8].y < landmarks[6].y &&  // Index finger extended
+            landmarks[12].y < landmarks[10].y && // Middle finger extended
+            landmarks[16].y > landmarks[14].y && // Ring finger not extended
+            landmarks[20].y > landmarks[18].y;   // Pinky finger not extended
+        if (onlyIndexAndMiddleExtended) return 'Scissors';
+
     }
 
-    // ถ้าไม่มีนิ้วไหนเหยียดตรง (นิ้วหุบทั้งหมด) ให้ตรวจจับเป็น "Rock"
-    const noFingersExtended = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
-    if (noFingersExtended) {
-        return 'Rock';
+    // ตรวจสอบการยืดของนิ้วเมื่อมืออยู่ในแนวนอน
+    else {
+        const allFingersExtended =
+            landmarks[8].x < landmarks[6].x &&  // Index finger extended
+            landmarks[12].x < landmarks[10].x && // Middle finger extended
+            landmarks[16].x < landmarks[14].x && // Ring finger extended
+            landmarks[20].x < landmarks[18].x;   // Pinky finger extended
+        if (allFingersExtended) return 'Paper';
+
+        const onlyIndexAndMiddleExtended =
+            landmarks[8].x < landmarks[6].x &&  // Index finger extended
+            landmarks[12].x < landmarks[10].x && // Middle finger extended
+            landmarks[16].x > landmarks[14].x && // Ring finger not extended
+            landmarks[20].x > landmarks[18].x;   // Pinky finger not extended
+        if (onlyIndexAndMiddleExtended) return 'Scissors';
     }
 
-    // ถ้าไม่ตรงกับท่าทางใด ๆ ให้คืนค่าเป็น "Rock" เป็นค่าดีฟอลต์
-    return 'Paper';
+    // ถ้านิ้วไม่อยู่ในท่าทาง Paper หรือ Scissors จะคืนค่าเป็น Rock
+    return 'Rock';
 }
+
+
+
+
+
+
+
+
+
+
+
