@@ -31,6 +31,11 @@
         .lose {
             color: red;
         }
+
+        .gesture-image {
+            width: 450px;
+            height: 400px;
+        }
     </style>
 
 </head>
@@ -41,23 +46,30 @@
         <button id="startButton" class="btn btn-primary mb-3">Start</button>
         <button id="resetButton" class="btn btn-danger mb-3">Reset</button>
         <div class="row">
-            <div class="col">
+            <div class="col-5">
                 <h3>Player 1 (You)</h3>
                 <video id="video" width="640" height="480" autoplay playsinline style="display: none;"></video>
-                <canvas id="canvas" width="640" height="480"></canvas>
-                <div id="player1Text" style="font-size: 24px;">Show your hand in front of the camera for 3 seconds.</div>
-                <div id="player1Score" style="font-size: 24px;">Player 1 Score: 0</div>
+                <canvas id="canvas" width="450" height="400"></canvas>
+                <div id="player1Text" style="font-size: 24px;">Show your hand in front of the camera.
+                </div>
             </div>
-            <div class="col">
+            <div class="col-2">
+                <div id="countdown" style="font-size: 32px; display: flex; justify-content: center; align-items: center; height: 100%;">Countdown:</div>
+            </div>
+            <div class="col-5">
                 <h3>Player 2 (AI)</h3>
-                <div id="aiGesture" style="font-size: 48px;">AI: Waiting...</div>
-                <div id="countdown" style="font-size: 48px;"></div>
-                <div id="player2Score" style="font-size: 24px;">Player 2 Score: 0</div>
+                <img id="aiGestureImage" class="gesture-image" src="/Tiger7.png" alt="AI gesture">
+                <div id="aiGesture" style="font-size: 24px;">AI: Waiting...</div>
+
             </div>
         </div>
         <div class="mt-3">
             <div id="textResult">Result: </div>
-            <div id="gameTurn" style="font-size: 24px;">Turn: 1</div>
+            <div id="gameTurn" style="font-size: 32px; font-weight: bold;">Turn: 1</div>
+            <div id="scores" style="font-size: 24px;">
+                <div id="player1Score">Player 1 Score: 0</div>
+                <div id="player2Score">Player 2 Score: 0</div>
+            </div>
         </div>
     </div>
     <script src="hand.js"></script>

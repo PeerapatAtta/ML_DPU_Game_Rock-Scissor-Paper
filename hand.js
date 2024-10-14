@@ -1,7 +1,6 @@
 const videoElement = document.getElementById('video');
 const canvasElement = document.getElementById('canvas');
 const canvasCtx = canvasElement.getContext('2d');
-const scoreElement = document.getElementById('score');
 const textResult = document.getElementById('textResult');
 const aiGestureElement = document.getElementById('aiGesture');
 const countdownElement = document.getElementById('countdown');
@@ -11,6 +10,7 @@ const resetButton = document.getElementById('resetButton');
 const player1ScoreElement = document.getElementById('player1Score');
 const player2ScoreElement = document.getElementById('player2Score');
 const gameTurnElement = document.getElementById('gameTurn');
+const aiGestureImage = document.getElementById('aiGestureImage'); // ช่องแสดงภาพท่าทางของ AI
 
 let player1Score = 0;
 let player2Score = 0;
@@ -51,7 +51,7 @@ camera.start();
 startButton.addEventListener('click', () => {
     if (!gameInProgress) {
         resetTurn();
-        player1Text.textContent = 'Show your hand in front of the camera for 3 seconds.';
+        player1Text.textContent = 'Show your hand in front of the camera.';
     }
 });
 
@@ -93,11 +93,11 @@ function onResults(results) {
     } else {
         handDetected = false; // ไม่พบมือ รีเซ็ต
         handHoldTime = 0;
-        player1Text.textContent = 'Show your hand in front of the camera for 3 seconds.';
+        player1Text.textContent = 'Show your hand in front of the camera.';
     }
 
-    // ถ้า Player 1 ยกมือค้างไว้ครบ 3 วินาที
-    if (handHoldTime >= 90) { // 90 เฟรม = ประมาณ 3 วินาที (ในกรณีที่ 30fps)
+    // ถ้า Player 1 ยกมือค้างไว้ครบ 2 วินาที
+    if (handHoldTime >= 60) { // 60 เฟรม = ประมาณ 2 วินาที (ในกรณีที่ 30fps)
         startCountdown();
         gameInProgress = false; // หยุดการตรวจจับเพิ่มเติมหลังจากเริ่มเกม
     }
@@ -124,6 +124,9 @@ function generateAIGesture() {
     const aiGesture = getRandomGesture();
     aiGestureElement.textContent = `AI: ${aiGesture}`;
 
+    // แสดงภาพท่าทางของ AI
+    aiGestureImage.src = getGestureImage(aiGesture);
+
     const result = compareGestures(player1Gesture, aiGesture);
     updateResult(result);  // ใช้ฟังก์ชันนี้ในการอัปเดตผลลัพธ์
 
@@ -142,7 +145,7 @@ function generateAIGesture() {
     gameTurnElement.textContent = `Turn: ${gameTurn}`;
 
     // เริ่มเทิร์นถัดไปโดยอัตโนมัติ
-    setTimeout(resetTurn, 3000);  // เริ่มเทิร์นใหม่หลังจากแสดงผลลัพธ์ 3 วินาที
+    setTimeout(resetTurn, 1000);  // เริ่มเทิร์นใหม่หลังจากแสดงผลลัพธ์ 3 วินาที
 }
 
 function updateResult(result) {
@@ -164,6 +167,7 @@ function resetTurn() {
     handDetected = false;
     textResult.textContent = '';
     aiGestureElement.textContent = 'AI: Waiting...';
+    aiGestureImage.src = '/Tiger7.png';  // ล้างรูปภาพของ AI เมื่อเริ่มเทิร์นใหม่
     countdownElement.textContent = '';
 }
 
@@ -180,6 +184,15 @@ function resetGame() {
 function getRandomGesture() {
     const gestures = ['Rock', 'Paper', 'Scissors'];
     return gestures[Math.floor(Math.random() * gestures.length)];
+}
+
+function getGestureImage(gesture) {
+    const gestureImages = {
+        'Rock': '/rock.png',   // ใส่ URL ของภาพ Rock
+        'Paper': '/paper.png', // ใส่ URL ของภาพ Paper
+        'Scissors': '/scissors.png' // ใส่ URL ของภาพ Scissors
+    };
+    return gestureImages[gesture] || '/Tiger7.png';
 }
 
 function compareGestures(player1Gesture, aiGesture) {
