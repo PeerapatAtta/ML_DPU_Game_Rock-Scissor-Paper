@@ -7,13 +7,19 @@ const aiGestureElement = document.getElementById('aiGesture');
 const countdownElement = document.getElementById('countdown');
 const player1Text = document.getElementById('player1Text');
 const startButton = document.getElementById('startButton');
+const resetButton = document.getElementById('resetButton');
+const player1ScoreElement = document.getElementById('player1Score');
+const player2ScoreElement = document.getElementById('player2Score');
+const gameTurnElement = document.getElementById('gameTurn');
 
 let player1Score = 0;
+let player2Score = 0;
 let player1Gesture = ''; // ท่าทางของ Player 1
 let gameInProgress = false; // ใช้เพื่อตรวจสอบสถานะของเกม
 let countdown = 3;
 let handHoldTime = 0; // เวลาในการยกมือค้างไว้
 let handDetected = false;
+let gameTurn = 1; // ตัวแปรสำหรับนับจำนวนเทิร์นของเกม
 
 const drawingUtils = window;
 const holistic = new Holistic({
@@ -44,10 +50,12 @@ camera.start();
 
 startButton.addEventListener('click', () => {
     if (!gameInProgress) {
-        resetGame();
+        resetTurn();
         player1Text.textContent = 'Show your hand in front of the camera for 3 seconds.';
     }
 });
+
+resetButton.addEventListener('click', resetGame); // ปุ่มสำหรับรีเซ็ตเกมใหม่
 
 function onResults(results) {
     if (!gameInProgress) return;
@@ -121,12 +129,20 @@ function generateAIGesture() {
 
     if (result === 'Win') {
         player1Score++;
+    } else if (result === 'Lose') {
+        player2Score++;
     }
 
-    scoreElement.textContent = `Player 1 Score: ${player1Score}`;
+    // อัปเดตคะแนน
+    player1ScoreElement.textContent = `Player 1 Score: ${player1Score}`;
+    player2ScoreElement.textContent = `Player 2 Score: ${player2Score}`;
+
+    // อัปเดตเทิร์นของเกม
+    gameTurn++;
+    gameTurnElement.textContent = `Turn: ${gameTurn}`;
 }
 
-function resetGame() {
+function resetTurn() {
     player1Gesture = '';
     gameInProgress = true;
     countdown = 3;
@@ -135,6 +151,16 @@ function resetGame() {
     textResult.textContent = '';
     aiGestureElement.textContent = 'AI: Waiting...';
     countdownElement.textContent = '';
+}
+
+function resetGame() {
+    player1Score = 0;
+    player2Score = 0;
+    gameTurn = 1;
+    resetTurn();
+    player1ScoreElement.textContent = `Player 1 Score: ${player1Score}`;
+    player2ScoreElement.textContent = `Player 2 Score: ${player2Score}`;
+    gameTurnElement.textContent = `Turn: ${gameTurn}`;
 }
 
 function getRandomGesture() {
