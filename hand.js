@@ -125,7 +125,7 @@ function generateAIGesture() {
     aiGestureElement.textContent = `AI: ${aiGesture}`;
 
     const result = compareGestures(player1Gesture, aiGesture);
-    textResult.textContent = `Result: ${result}`;
+    updateResult(result);  // ใช้ฟังก์ชันนี้ในการอัปเดตผลลัพธ์
 
     if (result === 'Win') {
         player1Score++;
@@ -140,6 +140,20 @@ function generateAIGesture() {
     // อัปเดตเทิร์นของเกม
     gameTurn++;
     gameTurnElement.textContent = `Turn: ${gameTurn}`;
+
+    // เริ่มเทิร์นถัดไปโดยอัตโนมัติ
+    setTimeout(resetTurn, 3000);  // เริ่มเทิร์นใหม่หลังจากแสดงผลลัพธ์ 3 วินาที
+}
+
+function updateResult(result) {
+    textResult.textContent = `Result: ${result}`;
+    if (result === 'Win') {
+        textResult.className = 'win';
+    } else if (result === 'Lose') {
+        textResult.className = 'lose';
+    } else {
+        textResult.className = '';
+    }
 }
 
 function resetTurn() {

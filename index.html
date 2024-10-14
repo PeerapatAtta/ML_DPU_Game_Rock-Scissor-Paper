@@ -18,6 +18,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/holistic.js"
         crossorigin="anonymous"></script>
 
+    <style>
+        #textResult {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .win {
+            color: green;
+        }
+
+        .lose {
+            color: red;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -30,26 +45,22 @@
                 <h3>Player 1 (You)</h3>
                 <video id="video" width="640" height="480" autoplay playsinline style="display: none;"></video>
                 <canvas id="canvas" width="640" height="480"></canvas>
-                <div id="player1Text" style="font-size: 24px;">Show your hand in front of the camera for 3 seconds.
-                </div>
-
+                <div id="player1Text" style="font-size: 24px;">Show your hand in front of the camera for 3 seconds.</div>
+                <div id="player1Score" style="font-size: 24px;">Player 1 Score: 0</div>
             </div>
             <div class="col">
                 <h3>Player 2 (AI)</h3>
                 <div id="aiGesture" style="font-size: 48px;">AI: Waiting...</div>
                 <div id="countdown" style="font-size: 48px;"></div>
-
+                <div id="player2Score" style="font-size: 24px;">Player 2 Score: 0</div>
             </div>
         </div>
         <div class="mt-3">
-            <div id="textResult" style="font-size: 24px; font-weight: bold; color: green;">Result: </div>
+            <div id="textResult">Result: </div>
             <div id="gameTurn" style="font-size: 24px;">Turn: 1</div>
-            <div id="player1Score" style="font-size: 20px;">Player 1 Score: 0</div>
-            <div id="player2Score" style="font-size: 20px;">Player 2 Score: 0</div>
         </div>
     </div>
     <script src="hand.js"></script>
-
 </body>
 
 </html>
