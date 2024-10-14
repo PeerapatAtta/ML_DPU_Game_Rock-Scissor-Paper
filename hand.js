@@ -97,7 +97,7 @@ function onResults(results) {
     }
 
     // ถ้า Player 1 ยกมือค้างไว้ครบ 2 วินาที
-    if (handHoldTime >= 60) { // 60 เฟรม = ประมาณ 2 วินาที (ในกรณีที่ 30fps)
+    if (handHoldTime >= 30) { // 60 เฟรม = ประมาณ 2 วินาที (ในกรณีที่ 30fps)
         startCountdown();
         gameInProgress = false; // หยุดการตรวจจับเพิ่มเติมหลังจากเริ่มเกม
     }
@@ -224,12 +224,18 @@ function compareGestures(player1Gesture, aiGesture) {
 function detectGesture(landmarks) {
     // ตรวจสอบทิศทางของมือก่อน (แนวตั้งหรือแนวนอน)
     const isVertical = Math.abs(landmarks[0].y - landmarks[9].y) > Math.abs(landmarks[0].x - landmarks[9].x);
-    // const isVertical = (landmarks[0].y < landmarks[17].y) || (landmarks[0].y < landmarks[1].y);
+    //ตรวจสอบว่ามือเป็นขวาหรือซ้ายในแนวนอน
+    const isLeftHand = landmarks[9].x < landmarks[0].x;  // มือซ้ายจะมีนิ้วโป้งอยู่ทางขวา
+
     //Show log if the hand is vertical or horizontal
     if (isVertical) {
         console.log("Vertical");
-    } else {
-        console.log("Horizontal");
+    }
+    else if (isLeftHand) {
+        console.log("Left Hand");
+    }
+    else {
+        console.log("Right Hand");
     }
 
     // ตรวจสอบการยืดของนิ้วเมื่อมืออยู่ในแนวตั้ง
@@ -249,9 +255,8 @@ function detectGesture(landmarks) {
         if (onlyIndexAndMiddleExtended) return 'Scissors';
 
     }
-
     // ตรวจสอบการยืดของนิ้วเมื่อมืออยู่ในแนวนอน
-    else {
+    else if (isLeftHand) {
         const allFingersExtended =
             landmarks[8].x < landmarks[6].x &&  // Index finger extended
             landmarks[12].x < landmarks[10].x && // Middle finger extended
@@ -264,6 +269,21 @@ function detectGesture(landmarks) {
             landmarks[12].x < landmarks[10].x && // Middle finger extended
             landmarks[16].x > landmarks[14].x && // Ring finger not extended
             landmarks[20].x > landmarks[18].x;   // Pinky finger not extended
+        if (onlyIndexAndMiddleExtended) return 'Scissors';
+    }
+    else {
+        const allFingersExtended =
+            landmarks[8].x > landmarks[6].x &&  // Index finger extended
+            landmarks[12].x > landmarks[10].x && // Middle finger extended
+            landmarks[16].x > landmarks[14].x && // Ring finger extended
+            landmarks[20].x > landmarks[18].x;   // Pinky finger extended
+        if (allFingersExtended) return 'Paper';
+
+        const onlyIndexAndMiddleExtended =
+            landmarks[8].x > landmarks[6].x &&  // Index finger extended
+            landmarks[12].x > landmarks[10].x && // Middle finger extended
+            landmarks[16].x < landmarks[14].x && // Ring finger not extended
+            landmarks[20].x < landmarks[18].x;   // Pinky finger not extended
         if (onlyIndexAndMiddleExtended) return 'Scissors';
     }
 
